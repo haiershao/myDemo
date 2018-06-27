@@ -58,8 +58,8 @@ typedef NS_ENUM(NSInteger, Setting_Target) {
  cf31 500D
  5032 6D
  */
-#define Request_header_usb_info_1 @"0000"
-#define Request_header_usb_info_2 @"003a"
+#define Request_header_usb_info_1 0x0000
+#define Request_header_usb_info_2 0x3a00
 #define Request_header_nikon @"a904"
 #define Request_header_nikon_D5000 @"cf31"
 //#define Request_header_nikon_6D @"5032"
@@ -68,9 +68,10 @@ typedef NS_ENUM(NSInteger, Setting_Target) {
 //#define Request_header_canon_500D @"cf31"
 //#define Request_header_canon_6D @"5032"
 
-#define Request_header_camera_connect_1 @"2000"
-#define Request_header_camera_connect_2 @"0000"
-#define Request_header_camera_connect_3 @"0120"
+#define Request_header_camera_connect_1 0x20
+#define Request_header_camera_connect_2 0x00
+//0120
+#define Request_header_camera_connect_3 0x2001
 
 
 #endif /* LHSocketDefine_h */

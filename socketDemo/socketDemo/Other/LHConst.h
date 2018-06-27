@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+typedef NS_ENUM(NSInteger, NikonPreviewType) {
+    NikonPreviewTypeOn  = 1,
+    NikonPreviewTypeOff = 0,
+};
 
 UIKIT_EXTERN int const TypeUndefined;
 UIKIT_EXTERN int const TypeCommand;

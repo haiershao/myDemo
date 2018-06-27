@@ -16,7 +16,7 @@
 #import <NSArray+YYAdd.h>
 static const NSInteger TIMEOUT = 30;
 static const NSInteger kHeartLimit = 1000;
-#define kHeartTime 2
+#define kHeartTime 0.3
 #define blockSelf(self) __weak __block typeof(self) weakSelf = self;
 @interface LHSocketManager ()<GCDAsyncSocketDelegate>{
     NSInteger _reconnectNum;//当前重连次数
@@ -220,8 +220,9 @@ static const NSInteger kHeartLimit = 1000;
 
         //心跳的意义不只是保持连接，还可以实时查询当前参数
         if (self.isSendHeart) {
-            NSData *data = [LHPacketData encodeCommandCode:0x90c7];
-            [LHSocketSender sendData:data withTimeout:-1 tag:111];
+            [LHSocketSender sendHeartCommand];
+//            NSData *data = [LHPacketData encodeCommandCode:NikonGetEvent];
+//            [LHSocketSender sendData:data withTimeout:-1 tag:111];
         }
     }
 }
