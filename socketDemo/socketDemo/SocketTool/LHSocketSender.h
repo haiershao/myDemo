@@ -33,6 +33,13 @@
 + (void)sendPreviewNikonEndLiveViewCommand;
 + (void)sendNikonMfDriveWithParam0:(int)param0 param1:(int)param1;
 + (void)send_22NikonWithParam1:(int)param1 param2:(int)param2;
++ (void)send_24NikonWithParam1:(int)param1 param2:(int)param2;
+
++ (void)selectItemForShutterSpeed:(NSArray *)valueArr selectIndex:(NSInteger)selectIndex;
++ (void)selectItemForExposureBiasCompensation:(NSArray *)valueArr selectIndex:(NSInteger)selectIndex;
++ (void)selectItemForWB:(NSInteger)selectIndex;
++ (void)selectItemForAFModel:(NSInteger)selectIndex;
++ (void)selectItemForExposureProgramMode:(NSInteger)selectIndex;
 
 + (void)sendData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag;
 @end

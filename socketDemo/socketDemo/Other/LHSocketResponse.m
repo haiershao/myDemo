@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 int const responseOk = 0x2001;
 int const GeneralError = 0x2002;

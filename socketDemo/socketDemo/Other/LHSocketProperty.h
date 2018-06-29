@@ -23,6 +23,7 @@ UIKIT_EXTERN int const FocusDistance;
 UIKIT_EXTERN int const FocusMode;
 UIKIT_EXTERN int const ExposureMeteringMode;
 UIKIT_EXTERN int const FlashMode;
+UIKIT_EXTERN int const FocusModeSetValue;
 UIKIT_EXTERN int const ExposureTime; // Shutter Speed
 UIKIT_EXTERN int const ExposureProgramMode;
 UIKIT_EXTERN int const ExposureIndex; // ISO Speed

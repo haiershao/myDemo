@@ -38,4 +38,5 @@ typedef NS_ENUM(NSInteger, LHPacketDataType) {
 + (NSData *)encode_21NikonCommandCodeAndCommandData:(int)code param1:(int)p1 param2:(int)p2 param3:(short)p3;
 + (NSData *)encode_22NikonCommandCodeAndCommandData:(int)code param1:(int)p1 param2:(int)p2;
 + (NSData *)encode_22WBNikonCommandCodeAndCommandData:(int)code param1:(int)p1 param2:(int)p2;
++ (NSData *)encode_24ShutterNikonCommandCodeAndCommandData:(int)code param1:(int)p1 param2:(int)p2;
 @end

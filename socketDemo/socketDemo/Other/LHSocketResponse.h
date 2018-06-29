@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 UIKIT_EXTERN int const responseOk;
 UIKIT_EXTERN int const GeneralError;

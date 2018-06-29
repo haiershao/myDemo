@@ -26,6 +26,7 @@
 #import "UIView+Extension.h"
 #import "JYNikon.h"
 #import "CameraModel.h"
+#import "JYLookupTableMethod.h"
 
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -51,11 +52,12 @@
     NSInteger testindex;
     NSTimeInterval startTime;
     NSTimeInterval beginStartTime;
-    NSTimeInterval stopTime;
+    __block NSTimeInterval stopTime;
     BOOL _isStartConnect;
     BOOL _responseOk;
     long _openSessionID;
     NSInteger _basePickerViewRow;
+    NSInteger _selectItem;
 }
 @property(nonatomic ,strong) NSTimer  *imageTimer;
 @property (weak, nonatomic) IBOutlet UIImageView *testImageView;
@@ -81,6 +83,14 @@
 @property (weak, nonatomic) IBOutlet UILabel *batteryLabel;
 @property (nonatomic, strong) UIPickerView *pickerView;
 @property (nonatomic, strong) NSArray *valuesArr;
+@property (weak, nonatomic) IBOutlet UIButton *left2Button;
+@property (weak, nonatomic) IBOutlet UIButton *right2Button;
+@property (weak, nonatomic) IBOutlet UIButton *left1Button;
+@property (weak, nonatomic) IBOutlet UIButton *right1Button;
+@property (weak, nonatomic) IBOutlet UIButton *right0Button;
+@property (weak, nonatomic) IBOutlet UIButton *left0Button;
+@property (weak, nonatomic) IBOutlet UIButton *afModelButton;
+
 @end
 
 @implementation ViewController
@@ -126,9 +136,25 @@
     return _imageDataArr;
 }
 
+/*
+ 00010fa0  69536 1/4000
+ 00010c80 68736 1/3200
+ 000107d0  67536 1/2500
+ 00010640 67136 1/2000
+ 000104e2  66786 1/1600
+ 000103e8  66536 1/1250
+ */
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    //@"0x001e0001"
+//    NSNumber *temp = [NSString numberHexString:@"0x001e0001"];
+//    float value = [@"0.00025" floatValue];
+//    NSLog(@"viewDidLoad>>> %f",value);
+//    [LHSocketSender send_24NikonWithParam1:NikonShutterSpeed param2:value*65536];
+//    [JYLookupTableMethod lockupShutterSpeedForValue:0xffffffff];
+    NSLog(@"viewDidLoad>>> %f",10000/1.3);
     _basePickerViewRow = 0;
     senderFlag = NO;
     startAppend = NO;
@@ -145,6 +171,7 @@
     testindex = 0;
     _responseOk = NO;
     _isStartConnect = NO;
+    _selectItem = 0;
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(testImageViewTapAction)];
     [self.testImageView addGestureRecognizer:tapGesture];
@@ -238,23 +265,28 @@
     if (!self.imageDataArr.count) {
         return ;
     }
-
     NSMutableData *imageAppendData = [NSMutableData data];
     NSTimeInterval Time1 = [[NSDate date] timeIntervalSince1970]*1000;
-    for (NSData *tempData in self.imageDataArr) {
-        [imageAppendData appendData:tempData];
-    }
-    NSTimeInterval Time2 = [[NSDate date] timeIntervalSince1970]*1000;
-//    NSLog(@"======preview====结束=====%lu -- %d -- %d",(unsigned long)imageAppendData.length,beginImageLength,beginImageHeaderLength);
-    if (imageAppendData.length < beginImageLength) return;
-    NSData *imageData = [imageAppendData subdataWithRange:NSMakeRange(beginImageHeaderLength, imageAppendData.length-beginImageHeaderLength)];
-    UIImage *image = [UIImage imageWithData:imageData];
-    if(!image) return;
-    if (!self.previewButton.selected) return;
-    self.testImageView.image = image;
-    stopTime = [[NSDate date] timeIntervalSince1970]*1000;
-//    NSLog(@"======================结束=================== %f -- %f",stopTime - beginStartTime,Time2-Time1);
-    [LHSocketSender sendPreviewNikonGetLiveViewImageCommand];
+   
+    dispatch_queue_t queue = dispatch_queue_create("socket.unpackingImageData.Queue", DISPATCH_QUEUE_SERIAL);
+    dispatch_async(queue, ^{
+        for (NSData *tempData in self.imageDataArr) {
+            [imageAppendData appendData:tempData];
+        }
+        NSTimeInterval Time2 = [[NSDate date] timeIntervalSince1970]*1000;
+        //    NSLog(@"======preview====结束=====%lu -- %d -- %d",(unsigned long)imageAppendData.length,beginImageLength,beginImageHeaderLength);
+        if (imageAppendData.length < beginImageLength) return;
+        NSData *imageData = [imageAppendData subdataWithRange:NSMakeRange(beginImageHeaderLength, imageAppendData.length-beginImageHeaderLength)];
+        UIImage *image = [UIImage imageWithData:imageData];
+        if(!image) return;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!self.previewButton.selected) return;
+            self.testImageView.image = image;
+            stopTime = [[NSDate date] timeIntervalSince1970]*1000;
+            //    NSLog(@"======================结束=================== %f -- %f",stopTime - beginStartTime,Time2-Time1);
+            [LHSocketSender sendPreviewNikonGetLiveViewImageCommand];
+        });
+    });
 }
 
 - (void)sendGetDeviceInfoCommand{
@@ -517,14 +549,16 @@
 }
 
 - (void)snalysisWithNotiObj:(LHSocketNotiObj *)notiObj{
-    if (notiObj.notiData.length<200) {
+    if (notiObj.notiData.length<1000) {
         NSLog(@">>>111response data %@",notiObj.notiData);
     }
     [self snalysisWithResponseNotiObj:notiObj];
     
     //Request_header_usb_info_1
-    if ([notiObj.noti_header1 compareWithHexint:Request_header_usb_info_1]) {//得到USB信息后去连接相机
-        if ([notiObj.noti_header2 compareWithHexint:Request_header_usb_info_2]) {
+    if ([notiObj.noti_header1 compareWithHexint:Request_header_usb_info_1]
+        ||[notiObj.noti_header1 compareWithHexint:Request_header_usb_info_1_kf]) {//得到USB信息后去连接相机
+        if ([notiObj.noti_header2 compareWithHexint:Request_header_usb_info_2]
+            ||[notiObj.noti_header2 compareWithHexint:Request_header_usb_info_2_kf]) {
             NSString *camera = notiObj.noti_values[9];
             NSString *cameraType = notiObj.noti_values[10];
             [self snalysisCameraInfoWithBrandStr:camera cameraTypeStr:cameraType];
@@ -679,6 +713,12 @@
     
     self.previewButton.selected = !self.previewButton.selected;
     if (self.previewButton.selected) {
+        self.left2Button.hidden = NO;
+        self.left1Button.hidden = NO;
+        self.left0Button.hidden = NO;
+        self.right2Button.hidden = NO;
+        self.right1Button.hidden = NO;
+        self.right0Button.hidden = NO;
         //1015
         [LHSocketSender sendGetDevicePropValueCommandWithParam:0xd1a4];
         //1016 21 NikonRecordingMedia 0x0d 1
@@ -701,100 +741,19 @@
         [LHSocketSender sendPreviewNikonGetLiveViewImageCommand];
         senderFlag = NO;
     }else{
+        self.left2Button.hidden = YES;
+        self.left1Button.hidden = YES;
+        self.left0Button.hidden = YES;
+        self.right2Button.hidden = YES;
+        self.right1Button.hidden = YES;
+        self.right0Button.hidden = YES;
         self.testImageView.image = nil;
         [LHSocketSender sendPreviewNikonEndLiveViewCommand];
         [LHSocketSender sendPreviewNikonChangeCameraModeCommand:NikonPreviewTypeOff];
         self.testImageView.image = nil;
+        
     }
 }
-
-////1016 21
-//- (void)previewNikonRecordingMediaCommmand2{
-//    NSData *data = [LHPacketData encode_21NikonCommandCodeAndCommandData:SetDevicePropValue param1:NikonRecordingMedia param2:0x0d param3:0];
-//    NSLog(@"预览NikonRecordingMedia2>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-////1014
-//- (void)sendGetDevicePropDescCommmand2{
-//    NSData *data = [LHPacketData encodeCommandCode:GetDevicePropDesc param0:0xd1a4];
-//    NSLog(@"预览GetDevicePropDesc>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-////1016 22
-//- (void)previewExposureProgramModeCommmand2{
-//    NSData *data = [LHPacketData encode_22NikonCommandCodeAndCommandData:SetDevicePropValue param1:StillCaptureMode param2:0x0e];
-//    NSLog(@"预览ExposureProgramMode2>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-////1015
-//- (void)sendGetDevicePropValueCommand2{
-//    [LHSocketManager shareSocketManager].sendHeart = NO;
-//    NSData *data = [LHPacketData encodeCommandCode:GetDevicePropValue param0:0x500e];
-//    NSLog(@"拍照GetDevicePropValue>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-////1014
-//- (void)sendGetDevicePropDescCommmand{
-//    [LHSocketManager shareSocketManager].sendHeart = NO;
-//    NSData *data = [LHPacketData encodeCommandCode:GetDevicePropDesc param0:ExposureProgramMode];
-//    NSLog(@"预览GetDevicePropDesc>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-////1016 21
-//- (void)previewNikonRecordingMediaCommmand{//
-//    NSData *data = [LHPacketData encode_21NikonCommandCodeAndCommandData:SetDevicePropValue param1:NikonRecordingMedia param2:0x0d param3:1];
-//    NSLog(@"预览NikonRecordingMedia>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-////1016 22
-//- (void)previewExposureProgramModeCommmand{
-//    NSData *data = [LHPacketData encode_22NikonCommandCodeAndCommandData:SetDevicePropValue param1:ExposureProgramMode param2:0x0e];
-//    NSLog(@"预览ExposureProgramMode>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-////90c2
-//- (void)previewNikonChangeCameraModeCommand{
-//    [LHSocketManager shareSocketManager].sendHeart = NO;
-//    NSData *data = [LHPacketData encodeCommandCode:NikonChangeCameraMode param0:1];
-//    NSLog(@"预览NikonStartLiveView>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-//- (void)previewStopNikonChangeCameraModeCommand{
-//    [LHSocketManager shareSocketManager].sendHeart = NO;
-//    NSData *data = [LHPacketData encodeCommandCode:NikonChangeCameraMode param0:0];
-//    NSLog(@"预览NikonStopLiveView>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-//- (void)previewNikonEndLiveViewCommand{
-//    [LHSocketManager shareSocketManager].sendHeart = NO;
-//    NSData *data = [LHPacketData encodeCommandCode:NikonEndLiveView];
-//    NSLog(@"预览NikonEndLiveView>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-////9201
-//- (void)previewNikonStartLiveViewCommand{
-//    [LHSocketManager shareSocketManager].sendHeart = NO;
-//    NSData *data = [LHPacketData encodeCommandCode:NikonStartLiveView];
-//    NSLog(@"预览NikonStartLiveView>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
-//
-//- (void)previewNikonGetLiveViewImageCommand{
-//    [LHSocketManager shareSocketManager].sendHeart = NO;
-//    NSData *data = [LHPacketData encodeCommandCode:NikonGetLiveViewImage];
-//    NSLog(@"预览GetLiveViewImage>>> %@",data);
-//    [LHSocketSender sendData:data withTimeout:-1 tag:110];
-//}
 
 //相机亮屏
 - (void)brightScreenCommand{
@@ -859,24 +818,66 @@
 }
 
 - (IBAction)apertureButtonClick:(UIButton *)sender {
-    
+    _selectItem = 0;
+    [self sendGetDevicePropDescAndFNumberCommand];
+    self.apertureButton.selected = !self.apertureButton.selected;
+    NSArray *tempArr = [JYNikon nikonApertureWithModel];
+    self.valuesArr = [tempArr copy];
 }
 
 - (IBAction)shutterButtonClick:(UIButton *)sender {
-    
+    _selectItem = 1;
+    [self sendGetDevicePropDescAndExposureTimeCommand];
+    self.shutterButton.selected = !self.shutterButton.selected;
+    NSArray *tempArr = [JYNikon nikonShutterSpeedWithModel];
+    self.valuesArr = [tempArr copy];
 }
 
 - (IBAction)exposureCompensationButtonClick:(UIButton *)sender {
-    
-    
+    _selectItem = 2;
+    self.exposureCompensationButton.selected = !self.exposureCompensationButton.selected;
+    [self sendGetDevicePropDescAndExposureBiasCompensationCommand];
+    NSArray *tempArr = [JYNikon nikonCompensationWithModel];
+    self.valuesArr = [tempArr copy];
 }
 
 - (IBAction)ISOButtonClick:(UIButton *)sender {
-    
-    
+    _selectItem = 3;
+    self.ISOButton.selected = !self.ISOButton.selected;
+    [self sendGetDevicePropDescAndExposureIndexCommand];
+    NSArray *tempArr = [JYNikon nikonISOWithModel];
+    self.valuesArr = [tempArr copy];
 }
 
 - (IBAction)whiteBalanceButtonClick:(UIButton *)sender {
+    _selectItem = 4;
+    self.whiteBalanceButton.selected = !self.whiteBalanceButton.selected;
+    [self sendGetDevicePropDescAndWhiteBalanceCommand];
+    NSArray *tempArr = [JYNikon nikonWhiteBalanceWithModel];
+    self.valuesArr = [tempArr copy];
+//    [self setUpPickerViewTitle:@"白平衡" defaultIndex:0];
+}
+
+- (IBAction)cameraModelButtonClick:(UIButton *)sender {
+    
+    _selectItem = 5;
+    self.cameraModelButton.selected = !self.cameraModelButton.selected;
+    NSArray *tempArr = [JYNikon nikonExposureProgramModel];
+    self.valuesArr = [tempArr copy];
+    [self sendGetDevicePropDescAndExposureProgramModeCommand];
+//    [self setUpPickerViewTitle:@"工作模式" defaultIndex:0];
+}
+
+- (IBAction)afModelButtonClick:(UIButton *)sender {
+    self.afModelButton.selected = !self.afModelButton.selected;
+    _selectItem = 6;
+    [LHSocketSender sendGetDevicePropDescCommmandWithParam:FocusMode];
+    NSArray *tempArr = [JYNikon nikonAFModel];
+    self.valuesArr = [tempArr copy];
+//    [self setUpPickerView:tempArr andTitle:@"AFModel"];
+}
+
+- (void)setUpPickerViewTitle:(NSString *)title defaultIndex:(NSInteger)defaultIndex{
     JYBasePickerView *basePickerView = [JYBasePickerView basePickerView];
     basePickerView.width = screenW;
     basePickerView.height = screenH;
@@ -885,19 +886,12 @@
     basePickerView.delegate = self;
     basePickerView.pickerView.delegate = self;
     basePickerView.pickerView.dataSource = self;
-    basePickerView.titleLabel.text = @"白平衡";
-    NSArray *tempArr = [JYNikon nikonWhiteBalanceWithModel];
-    self.valuesArr = [tempArr copy];
+    basePickerView.titleLabel.text = title;
     self.pickerView = basePickerView.pickerView;
-    [basePickerView.pickerView selectRow:_basePickerViewRow inComponent:0 animated:NO];
+    _basePickerViewRow = defaultIndex;
     [basePickerView.pickerView reloadComponent:0];
+    [basePickerView.pickerView selectRow:_basePickerViewRow inComponent:0 animated:NO];
     [self.view addSubview:basePickerView];
-    
-}
-
-- (IBAction)cameraModelButtonClick:(UIButton *)sender {
-    
-    
 }
 
 - (IBAction)focalLengthRight2ButtonClick:(UIButton *)sender {
@@ -973,11 +967,14 @@
     NSString *startConnnectStr = [[NSString alloc]initWithData:startConnnectData encoding:NSUTF8StringEncoding];
     
     if ([startConnnectStr isEqualToString:@"DslrDashboardServer"]) {
+        NSLog(@"DslrDashboardServer");
         [LHSocketSender sendGetUSB_infoCommand];
     }
     
     NSString *tempStr = @"";
     NSString *commandStr = @"";
+    NSString *valueStr = @"";
+    long valueCommand = 0;
     long commandCountID = -1;
     NSString *headStr = notiObj.noti_values[0];
     if ([headStr compareWithHexint:0x1c]){//28 39?
@@ -1004,13 +1001,164 @@
             commandCountID = [NSArray arrayConverIntWithString:IDStr];
             NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
         }
-    }else{//0x10
+    }else if ([headStr compareWithHexint:0x27]){//0x27 37
+        if (notiObj.noti_values.count>11) {
+            commandStr = notiObj.noti_values[5];
+            NSString *IDStr = notiObj.noti_values[6];
+            commandCountID = [NSArray arrayConverIntWithString:IDStr];
+            tempStr = notiObj.noti_values[8];
+            NSString *batteryStr = notiObj.noti_values[11];
+            batteryStr = [batteryStr substringWithRange:NSMakeRange(0, 2)];
+            valueCommand = [NSArray arrayConverIntWithString:batteryStr];
+            if ([tempStr compareWithHexint:0x5001]) {
+                self.batteryLabel.text = [NSString stringWithFormat:@"%ld",valueCommand];
+            }
+            NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
+        }
+    }else if ([headStr compareWithHexint:0x30]){//
+        if (notiObj.noti_values.count>11) {
+            commandStr = notiObj.noti_values[5];
+            NSString *IDStr = notiObj.noti_values[6];
+            commandCountID = [NSArray arrayConverIntWithString:IDStr];
+            tempStr = notiObj.noti_values[8];
+            valueStr = notiObj.noti_values[11];
+            if (self.afModelButton.selected) {
+                if ([tempStr compareWithHexint:FocusMode]) {
+                    [self setUpPickerViewTitle:@"AFModel" defaultIndex:[JYLookupTableMethod afModelDefaultSelect:valueStr]];
+                    NSLog(@"afModelDefault valueStr %@ -- %ld",valueStr,(long)[JYLookupTableMethod afModelDefaultSelect:valueStr]);
+                }
+            }
+            
+            NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
+        }
+    }else if ([headStr compareWithHexint:0x4a]||[headStr compareWithHexint:0x4c]){//
+        if (notiObj.noti_values.count>11) {
+            commandStr = notiObj.noti_values[5];
+            NSString *IDStr = notiObj.noti_values[6];
+            commandCountID = [NSArray arrayConverIntWithString:IDStr];
+            tempStr = notiObj.noti_values[8];
+            valueStr = [NSString stringWithFormat:@"%@%@",notiObj.noti_values[11],notiObj.noti_values[12]];
+            valueStr = [valueStr substringWithRange:NSMakeRange(2, 4)];
+//            NSLog(@"apertureDefaultSelect>>>%@ -- %@",notiObj.notiData,valueStr);
+            if (self.apertureButton.selected) {
+                if ([tempStr compareWithHexint:FNumber]) {
+                    [JYLookupTableMethod apertureDefaultSelect:valueStr andValuesArr:self.valuesArr resultBlock:^(NSInteger selectIndex) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self setUpPickerViewTitle:@"光圈" defaultIndex:selectIndex];
+//                            NSLog(@"apertureDefaultSelect valueStr %@ -- %ld",valueStr,selectIndex);
+                        });
+                    }];
+                }
+            }
+            NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
+        }
+    }else if ([headStr compareWithHexint:0x100]){
+        if (notiObj.noti_values.count>11) {
+            commandStr = notiObj.noti_values[5];
+            NSString *IDStr = notiObj.noti_values[6];
+            commandCountID = [NSArray arrayConverIntWithString:IDStr];
+            tempStr = notiObj.noti_values[8];
+            valueStr = [NSString stringWithFormat:@"%@%@%@",notiObj.noti_values[12],notiObj.noti_values[13],notiObj.noti_values[14]];
+            valueStr = [valueStr substringWithRange:NSMakeRange(2, 8)];
+//            NSLog(@"ExposureTime>>>%@ -- %@",notiObj.notiData,valueStr);
+            if (self.shutterButton.selected) {
+                if ([tempStr compareWithHexint:ExposureTime]) {
+                    [JYLookupTableMethod shutterDefaultSelect:valueStr andValuesArr:self.valuesArr resultBlock:^(NSInteger selectIndex) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self setUpPickerViewTitle:@"快门" defaultIndex:selectIndex];
+//                            NSLog(@"ExposureTime valueStr %@ -- %ld",valueStr,selectIndex);
+                        });
+                    }];
+                }
+            }
+            NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
+        }
+    }else if ([headStr compareWithHexint:0x66]){
+        if (notiObj.noti_values.count>11) {
+            commandStr = notiObj.noti_values[5];
+            NSString *IDStr = notiObj.noti_values[6];
+            commandCountID = [NSArray arrayConverIntWithString:IDStr];
+            tempStr = notiObj.noti_values[8];
+            valueStr = [NSString stringWithFormat:@"%@%@",notiObj.noti_values[11],notiObj.noti_values[12]];
+            valueStr = [valueStr substringWithRange:NSMakeRange(2, 4)];
+            //            NSLog(@"ExposureTime>>>%@ -- %@",notiObj.notiData,valueStr);
+            if (self.exposureCompensationButton.selected) {
+                if ([tempStr compareWithHexint:ExposureBiasCompensation]) {
+                    [JYLookupTableMethod exposureCompensationDefaultSelect:valueStr andValuesArr:self.valuesArr resultBlock:^(NSInteger selectIndex) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self setUpPickerViewTitle:@"曝光补偿" defaultIndex:selectIndex];
+//                            NSLog(@"exposureCompensation valueStr %@ -- %ld",valueStr,selectIndex);
+                        });
+                    }];
+                }
+            }
+            NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
+        }
+    }else if ([headStr compareWithHexint:0x4e]){
+        if (notiObj.noti_values.count>11) {
+            commandStr = notiObj.noti_values[5];
+            NSString *IDStr = notiObj.noti_values[6];
+            commandCountID = [NSArray arrayConverIntWithString:IDStr];
+            tempStr = notiObj.noti_values[8];
+            valueStr = [NSString stringWithFormat:@"%@%@",notiObj.noti_values[11],notiObj.noti_values[12]];
+            valueStr = [valueStr substringWithRange:NSMakeRange(2, 4)];
+            //            NSLog(@"ExposureTime>>>%@ -- %@",notiObj.notiData,valueStr);
+            if (self.ISOButton.selected) {
+                if ([tempStr compareWithHexint:ExposureIndex]) {
+                    [JYLookupTableMethod ISODefaultSelect:valueStr andValuesArr:self.valuesArr resultBlock:^(NSInteger selectIndex) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self setUpPickerViewTitle:@"ISO" defaultIndex:selectIndex];
+//                            NSLog(@"ISO valueStr %@ -- %ld",valueStr,selectIndex);
+                        });
+                    }];
+                }
+            }
+            NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
+        }
+    }else if ([headStr compareWithHexint:0x38]){
+        if (notiObj.noti_values.count>11) {
+            commandStr = notiObj.noti_values[5];
+            NSString *IDStr = notiObj.noti_values[6];
+            commandCountID = [NSArray arrayConverIntWithString:IDStr];
+            tempStr = notiObj.noti_values[8];
+            valueStr = [NSString stringWithFormat:@"%@%@",notiObj.noti_values[11],notiObj.noti_values[12]];
+            valueStr = [valueStr substringWithRange:NSMakeRange(2, 4)];
+            //            NSLog(@"ExposureTime>>>%@ -- %@",notiObj.notiData,valueStr);
+            if (self.whiteBalanceButton.selected) {
+                if ([tempStr compareWithHexint:WhiteBalance]) {
+                    NSInteger selectIndex = [JYLookupTableMethod whiteBalanceDefaultSelect:valueStr];
+                    [self setUpPickerViewTitle:@"白平衡" defaultIndex:selectIndex];
+//                    NSLog(@"whiteBalance valueStr %@ -- %ld",valueStr,selectIndex);
+                }
+            }
+            NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
+        }
+    }else if ([headStr compareWithHexint:0x42]){
+        if (notiObj.noti_values.count>11) {
+            commandStr = notiObj.noti_values[5];
+            NSString *IDStr = notiObj.noti_values[6];
+            commandCountID = [NSArray arrayConverIntWithString:IDStr];
+            tempStr = notiObj.noti_values[8];
+            valueStr = [NSString stringWithFormat:@"%@%@",notiObj.noti_values[11],notiObj.noti_values[12]];
+            valueStr = [valueStr substringWithRange:NSMakeRange(2, 4)];
+            //            NSLog(@"ExposureTime>>>%@ -- %@",notiObj.notiData,valueStr);
+            if (self.cameraModelButton.selected) {
+                if ([tempStr compareWithHexint:ExposureProgramMode]) {
+                    NSInteger selectIndex = [JYLookupTableMethod cameraModelDefaultSelect:valueStr];
+                    [self setUpPickerViewTitle:@"工作模式" defaultIndex:selectIndex];
+                    //                    NSLog(@"whiteBalance valueStr %@ -- %ld",valueStr,selectIndex);
+                }
+            }
+            NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
+        }
+    }
+    else{//0x10
         if (notiObj.noti_values.count>5) {
             commandStr = notiObj.noti_values[5];
             tempStr = notiObj.noti_values[5];
             NSString *IDStr = notiObj.noti_values[6];
             commandCountID = [NSArray arrayConverIntWithString:IDStr];
-            NSLog(@">>>response commandCountID %ld -- %ld",commandCountID,packetData.commandCountID);
+            NSLog(@">>>response commandCountID %ld -- %ld -- %ld",commandCountID,packetData.commandCountID,valueCommand);
         }
     }
     
@@ -1198,15 +1346,6 @@
         _isStartConnect = NO;
 //        [self testCode];
     }
-    
-    if ([notiObj.noti_header1 isEqualToStringWithoutCase:Response_header_result]
-        ||[notiObj.noti_header1 isEqualToStringWithoutCase:Request_header_take_picture]) {
-        if ([notiObj.noti_header2 isEqualToStringWithoutCase:Response_header_result_1]
-            ||[notiObj.noti_header2 isEqualToStringWithoutCase:Request_header_take_picture_1]) {
-            
-            
-        }
-    }
 }
 
 
@@ -1256,9 +1395,44 @@
     [pickerView reloadComponent:0];
 }
 
+- (void)basePickerView:(JYBasePickerView *)basePickerView cancelBtn:(UIButton *)ccancelBtn{
+    self.afModelButton.selected = NO;
+    self.apertureButton.selected = NO;
+    self.shutterButton.selected = NO;
+    self.exposureCompensationButton.selected = NO;
+    self.ISOButton.selected = NO;
+    self.whiteBalanceButton.selected = NO;
+    self.cameraModelButton.selected = NO;
+}
+
 - (void)basePickerView:(JYBasePickerView *)basePickerView confirmBtn:(UIButton *)confirmBtn{
-    [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:0x0005];
-    [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    
+    if (0 == _selectItem) {
+        float value = [self.valuesArr[_basePickerViewRow] floatValue];
+        [LHSocketSender send_22NikonWithParam1:FNumber param2:value*100];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:FNumber];
+    }else if (1 == _selectItem){
+        [LHSocketSender selectItemForShutterSpeed:self.valuesArr selectIndex:_basePickerViewRow];
+    }else if (2 == _selectItem){
+        [LHSocketSender selectItemForExposureBiasCompensation:self.valuesArr selectIndex:_basePickerViewRow];
+    }else if (3 == _selectItem){//ExposureIndex
+        int value = [self.valuesArr[_basePickerViewRow] intValue];
+        [LHSocketSender send_22NikonWithParam1:ExposureIndex param2:value];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureIndex];
+    }else if (4 == _selectItem) {
+        [LHSocketSender selectItemForWB:_basePickerViewRow];
+    }else if (5 == _selectItem) {
+        [LHSocketSender selectItemForExposureProgramMode:_basePickerViewRow];
+    }else{
+        [LHSocketSender selectItemForAFModel:_basePickerViewRow];
+    }
+    self.afModelButton.selected = NO;
+    self.apertureButton.selected = NO;
+    self.shutterButton.selected = NO;
+    self.exposureCompensationButton.selected = NO;
+    self.ISOButton.selected = NO;
+    self.whiteBalanceButton.selected = NO;
+    self.cameraModelButton.selected = NO;
 }
 
 // 信息展示

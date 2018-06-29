@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 UIKIT_EXTERN int const UndefinedOperationCode;
 UIKIT_EXTERN int const GetDeviceInfo;

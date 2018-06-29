@@ -21,6 +21,7 @@ int const FNumber = 0x5007; // Aperture Value
 int const FocalLength = 0x5008;
 int const FocusDistance = 0x5009;
 int const FocusMode = 0x500A;
+int const FocusModeSetValue = 0xD161;
 int const ExposureMeteringMode = 0x500B;
 int const FlashMode = 0x500C;
 int const ExposureTime = 0x500D; // Shutter Speed

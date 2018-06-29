@@ -16,7 +16,7 @@
 #import <NSArray+YYAdd.h>
 static const NSInteger TIMEOUT = 30;
 static const NSInteger kHeartLimit = 1000;
-#define kHeartTime 0.3
+#define kHeartTime 2
 #define blockSelf(self) __weak __block typeof(self) weakSelf = self;
 @interface LHSocketManager ()<GCDAsyncSocketDelegate>{
     NSInteger _reconnectNum;//当前重连次数

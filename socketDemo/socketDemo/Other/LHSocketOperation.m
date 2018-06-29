@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 int const UndefinedOperationCode = 0x1000;
 int const GetDeviceInfo = 0x1001;

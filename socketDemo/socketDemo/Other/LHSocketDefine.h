@@ -58,8 +58,12 @@ typedef NS_ENUM(NSInteger, Setting_Target) {
  cf31 500D
  5032 6D
  */
+
+#define Request_header_usb_info_1_kf 0x003a
+#define Request_header_usb_info_2_kf 0x0000
 #define Request_header_usb_info_1 0x0000
 #define Request_header_usb_info_2 0x3a00
+
 #define Request_header_nikon @"a904"
 #define Request_header_nikon_D5000 @"cf31"
 //#define Request_header_nikon_6D @"5032"

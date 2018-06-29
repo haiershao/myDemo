@@ -21,6 +21,9 @@
 
 //字符串与16进制int比较
 - (BOOL)compareWithHexint:(int)hexInt;
+- (BOOL)compareNotConverHexint:(int)hexInt;
+
+- (float)hexString2Floa;
 
 + (NSArray *)snalysisWithResponseTwoString:(NSString *)responseStr;
 

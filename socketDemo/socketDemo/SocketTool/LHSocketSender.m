@@ -160,16 +160,185 @@
 + (void)send_22NikonWithParam1:(int)param1 param2:(int)param2{
     [LHSocketManager shareSocketManager].sendHeart = NO;
     NSData *data = [LHPacketData encode_22WBNikonCommandCodeAndCommandData:SetDevicePropValue param1:param1 param2:param2];
-    NSLog(@"WB>>> %@",data);
+    NSLog(@"send_22NikonWithParam1>>> %@",data);
     [LHSocketSender sendData:data withTimeout:-1 tag:110];
 }
 
++ (void)send_24NikonWithParam1:(int)param1 param2:(int)param2{
+    [LHSocketManager shareSocketManager].sendHeart = NO;
+    NSData *data = [LHPacketData encode_24ShutterNikonCommandCodeAndCommandData:SetDevicePropValue param1:param1 param2:param2];
+    NSLog(@"send_24NikonWithParam1>>> %@",data);
+    [LHSocketSender sendData:data withTimeout:-1 tag:110];
+}
 
++ (void)selectItemForShutterSpeed:(NSArray *)valueArr selectIndex:(NSInteger)selectIndex{
+    NSString *tempStr = valueArr[selectIndex];
+    int value = 0;
+    int param = 0;
+    if ([tempStr containsString:@"/"]&&![tempStr containsString:@"."]) {
+        tempStr = [tempStr componentsSeparatedByString:@"/"].lastObject;
+        value = [tempStr intValue];
+        param = 65536 + value;
+    }else if ([tempStr containsString:@"."]){
+        NSString *firstStr = @"";
+        NSString *lastStr = @"";
+        int firstValue = 0;
+        int lastValue = 0;
+        firstStr = [tempStr componentsSeparatedByString:@"."].firstObject;
+        firstStr = [firstStr componentsSeparatedByString:@"/"].lastObject;
+        lastStr = [tempStr componentsSeparatedByString:@"."].lastObject;
+        firstValue = [firstStr intValue];
+        lastValue = [lastStr intValue];
+        param = 65536*10+firstValue*10+lastValue;
+        //            NSLog(@"%@--%@--%d--%d",firstStr,lastStr,firstValue,lastValue);
+    }else if ([tempStr isEqualToString:@"bulb"]){
+        param = 0xffffffff;
+    }else{
+        value = [tempStr intValue];
+        if (0 == value) {
+            param = 65536+1;
+        }else{
+            param = value*65536+1;
+        }
+    }
+    //        NSLog(@"basePickerView>>> %@ -- %d -- %d",tempStr, value,param);
+    [LHSocketSender send_24NikonWithParam1:NikonShutterSpeed param2:param];
+    [LHSocketSender sendGetDevicePropDescCommmandWithParam:NikonShutterSpeed];
+    
+}
 
++ (void)selectItemForWB:(NSInteger)selectIndex{
+    if (0 == selectIndex) {
+        [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:NikonWhitebalance_Auto];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    }else if (1 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:NikonWhitebalance_Sunny];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    }else if (2 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:NikonWhitebalance_Fluorescent];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    }else if (3 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:NikonWhitebalance_Incandescent];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    }else if (4 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:NikonWhitebalance_Flash];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    }else if (5 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:NikonWhitebalance_Cloudy];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    }else if (6 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:NikonWhitebalance_SunnyShade];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    }else if (7 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:NikonWhitebalance_ColorTemperature];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    }else if (8 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:WhiteBalance param2:NikonWhitebalance_Preset];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:WhiteBalance];
+    }
+}
 
++ (void)selectItemForAFModel:(NSInteger)selectIndex{
+    if (0 == selectIndex) {
+        [LHSocketSender sendPreviewNikonRecordingMediaCommmandWithParam0:FocusModeSetValue param1:0x0d param2:NikonFocusModelSetValue_AF_S];//AF-S
+    }else if (1 == selectIndex){
+        [LHSocketSender sendPreviewNikonRecordingMediaCommmandWithParam0:FocusModeSetValue param1:0x0d param2:NikonFocusModelSetValue_AF_C];//AF-C
+    }else if (2 == selectIndex){
+        [LHSocketSender sendPreviewNikonRecordingMediaCommmandWithParam0:FocusModeSetValue param1:0x0d param2:NikonFocusModelSetValue_AF_A];//AF-A
+    }else if (3 == selectIndex){
+        [LHSocketSender sendPreviewNikonRecordingMediaCommmandWithParam0:FocusModeSetValue param1:0x0d param2:NikonFocusModelSetValue_MF];//MF
+    }else if (4 == selectIndex){
+        [LHSocketSender sendPreviewNikonRecordingMediaCommmandWithParam0:FocusModeSetValue param1:0x0d param2:0x03];
+    }
+}
 
++ (void)selectItemForExposureBiasCompensation:(NSArray *)valueArr selectIndex:(NSInteger)selectIndex{
+    NSString *tempStr = valueArr[selectIndex];
+    NSString *firstStr = @"";
+    NSString *lastStr = @"";
+    int firstValue = 0;
+    int lastValue = 0;
+    int param = 0;
+    if ([tempStr containsString:@"-"]) {
+        tempStr = [tempStr componentsSeparatedByString:@"-"].lastObject;
+        firstStr = [tempStr componentsSeparatedByString:@"."].firstObject;
+        lastStr = [tempStr componentsSeparatedByString:@"."].lastObject;
+        firstValue = [firstStr intValue];
+        lastValue = [lastStr intValue];
+        if (![tempStr containsString:@"."]) {
+            param = 65536-firstValue*1000;
+        }else{
+            if (7 == lastValue) {
+                lastValue = lastValue - 1;
+            }
+            param = 65536-(firstValue*1000+lastValue*100+lastValue*10+lastValue);
+        }
+    }else{
+        firstStr = [tempStr componentsSeparatedByString:@"."].firstObject;
+        lastStr = [tempStr componentsSeparatedByString:@"."].lastObject;
+        firstValue = [firstStr intValue];
+        lastValue = [lastStr intValue];
+        if (![tempStr containsString:@"."]) {
+            param = firstValue*1000;
+        }else{
+            if (7 == lastValue) {
+                lastValue = lastValue - 1;
+            }
+            param = firstValue*1000+lastValue*100+lastValue*10+lastValue;
+        }
+    }
+    [LHSocketSender send_22NikonWithParam1:ExposureBiasCompensation param2:param];
+    [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureBiasCompensation];
+}
 
-
++ (void)selectItemForExposureProgramMode:(NSInteger)selectIndex{
+    if (0 == selectIndex) {
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_m];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (1 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_program];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (2 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_av];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (3 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_tv];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (4 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_auto];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (5 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_portrait];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (6 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_landscape];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (7 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_close_up];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (8 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_sports];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (9 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_night_scene_portrait];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (10 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_flash_off];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (11 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_Child];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (12 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_SCENE];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (13 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_mode_U1];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }else if (14 == selectIndex){
+        [LHSocketSender send_22NikonWithParam1:ExposureProgramMode param2:ExposureProgramModel_mode_U2];
+        [LHSocketSender sendGetDevicePropDescCommmandWithParam:ExposureProgramMode];
+    }
+}
 
 
 

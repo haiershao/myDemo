@@ -8,10 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		99B9445740E858398DC67F27 /* libPods-socketDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC010C9A962713DB34E03D1 /* libPods-socketDemo.a */; };
-		DF34BC0920E0EA44009CAD3D /* JYCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = DF34BC0120E0EA43009CAD3D /* JYCamera.m */; };
-		DF34BC0A20E0EA44009CAD3D /* JYNikon.m in Sources */ = {isa = PBXBuildFile; fileRef = DF34BC0320E0EA44009CAD3D /* JYNikon.m */; };
-		DF34BC0B20E0EA44009CAD3D /* JYCanonDic.m in Sources */ = {isa = PBXBuildFile; fileRef = DF34BC0720E0EA44009CAD3D /* JYCanonDic.m */; };
-		DF34BC0C20E0EA44009CAD3D /* JYCanon.m in Sources */ = {isa = PBXBuildFile; fileRef = DF34BC0820E0EA44009CAD3D /* JYCanon.m */; };
 		DF36CE5720DB87CC003CA1EB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DF36CE5620DB87CC003CA1EB /* AppDelegate.m */; };
 		DF36CE5A20DB87CD003CA1EB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DF36CE5920DB87CD003CA1EB /* ViewController.m */; };
 		DF36CE5D20DB87CD003CA1EB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF36CE5B20DB87CD003CA1EB /* Main.storyboard */; };
@@ -36,6 +32,11 @@
 		DF3A195C20E25C3F0078BF9F /* JYBasePickerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = DF3A195A20E25C3E0078BF9F /* JYBasePickerView.xib */; };
 		DF3A195D20E25C3F0078BF9F /* JYBasePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = DF3A195B20E25C3E0078BF9F /* JYBasePickerView.m */; };
 		DF3A196020E25EFE0078BF9F /* UIView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = DF3A195E20E25EFD0078BF9F /* UIView+Extension.m */; };
+		DF3EB60520E31D6400AA36FD /* JYCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = DF3EB5FE20E31D6300AA36FD /* JYCamera.m */; };
+		DF3EB60620E31D6400AA36FD /* JYCanonDic.m in Sources */ = {isa = PBXBuildFile; fileRef = DF3EB60020E31D6300AA36FD /* JYCanonDic.m */; };
+		DF3EB60720E31D6400AA36FD /* JYNikon.m in Sources */ = {isa = PBXBuildFile; fileRef = DF3EB60220E31D6400AA36FD /* JYNikon.m */; };
+		DF3EB60820E31D6400AA36FD /* JYCanon.m in Sources */ = {isa = PBXBuildFile; fileRef = DF3EB60320E31D6400AA36FD /* JYCanon.m */; };
+		DF4360CF20E6014100FD5574 /* JYLookupTableMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = DF4360CE20E6014100FD5574 /* JYLookupTableMethod.m */; };
 		DF450DA220DD0A7A006C6542 /* JYProduct.m in Sources */ = {isa = PBXBuildFile; fileRef = DF450DA120DD0A7A006C6542 /* JYProduct.m */; };
 /* End PBXBuildFile section */
 
@@ -59,15 +60,6 @@
 /* Begin PBXFileReference section */
 		00EF8B0C10FCFCC3E3F728A7 /* Pods-socketDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-socketDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-socketDemo/Pods-socketDemo.release.xcconfig"; sourceTree = "<group>"; };
 		8DC010C9A962713DB34E03D1 /* libPods-socketDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-socketDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		DF34BC0120E0EA43009CAD3D /* JYCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JYCamera.m; path = ../../../../../wenyunPro/Classes/Home_config/Settings/SettingModel/CamSetting/JYCamera.m; sourceTree = "<group>"; };
-		DF34BC0220E0EA43009CAD3D /* JYCanonDic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JYCanonDic.h; path = ../../../../../wenyunPro/Classes/Home_config/Settings/SettingModel/CamSetting/JYCanonDic.h; sourceTree = "<group>"; };
-		DF34BC0320E0EA44009CAD3D /* JYNikon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JYNikon.m; path = ../../../../../wenyunPro/Classes/Home_config/Settings/SettingModel/CamSetting/JYNikon.m; sourceTree = "<group>"; };
-		DF34BC0420E0EA44009CAD3D /* JYCanon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JYCanon.h; path = ../../../../../wenyunPro/Classes/Home_config/Settings/SettingModel/CamSetting/JYCanon.h; sourceTree = "<group>"; };
-		DF34BC0520E0EA44009CAD3D /* JYCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JYCamera.h; path = ../../../../../wenyunPro/Classes/Home_config/Settings/SettingModel/CamSetting/JYCamera.h; sourceTree = "<group>"; };
-		DF34BC0620E0EA44009CAD3D /* JYNikon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JYNikon.h; path = ../../../../../wenyunPro/Classes/Home_config/Settings/SettingModel/CamSetting/JYNikon.h; sourceTree = "<group>"; };
-		DF34BC0720E0EA44009CAD3D /* JYCanonDic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JYCanonDic.m; path = ../../../../../wenyunPro/Classes/Home_config/Settings/SettingModel/CamSetting/JYCanonDic.m; sourceTree = "<group>"; };
-		DF34BC0820E0EA44009CAD3D /* JYCanon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JYCanon.m; path = ../../../../../wenyunPro/Classes/Home_config/Settings/SettingModel/CamSetting/JYCanon.m; sourceTree = "<group>"; };
-		DF34BC0D20E0EB37009CAD3D /* CameraModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraModel.h; path = ../../../../../wenyunPro/SLR_PTZ/Headers/CameraModel.h; sourceTree = "<group>"; };
 		DF36CE5220DB87CC003CA1EB /* socketDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = socketDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF36CE5520DB87CC003CA1EB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		DF36CE5620DB87CC003CA1EB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -116,6 +108,17 @@
 		DF3A195B20E25C3E0078BF9F /* JYBasePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYBasePickerView.m; sourceTree = "<group>"; };
 		DF3A195E20E25EFD0078BF9F /* UIView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extension.m"; sourceTree = "<group>"; };
 		DF3A195F20E25EFE0078BF9F /* UIView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extension.h"; sourceTree = "<group>"; };
+		DF3EB5FD20E31D6300AA36FD /* JYCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYCamera.h; sourceTree = "<group>"; };
+		DF3EB5FE20E31D6300AA36FD /* JYCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYCamera.m; sourceTree = "<group>"; };
+		DF3EB5FF20E31D6300AA36FD /* JYCanonDic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYCanonDic.h; sourceTree = "<group>"; };
+		DF3EB60020E31D6300AA36FD /* JYCanonDic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYCanonDic.m; sourceTree = "<group>"; };
+		DF3EB60120E31D6400AA36FD /* JYNikon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYNikon.h; sourceTree = "<group>"; };
+		DF3EB60220E31D6400AA36FD /* JYNikon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYNikon.m; sourceTree = "<group>"; };
+		DF3EB60320E31D6400AA36FD /* JYCanon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JYCanon.m; sourceTree = "<group>"; };
+		DF3EB60420E31D6400AA36FD /* JYCanon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JYCanon.h; sourceTree = "<group>"; };
+		DF3EB60920E31EAA00AA36FD /* CameraModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraModel.h; sourceTree = "<group>"; };
+		DF4360CD20E6014100FD5574 /* JYLookupTableMethod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JYLookupTableMethod.h; sourceTree = "<group>"; };
+		DF4360CE20E6014100FD5574 /* JYLookupTableMethod.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JYLookupTableMethod.m; sourceTree = "<group>"; };
 		DF450DA020DD0A7A006C6542 /* JYProduct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JYProduct.h; sourceTree = "<group>"; };
 		DF450DA120DD0A7A006C6542 /* JYProduct.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JYProduct.m; sourceTree = "<group>"; };
 		E6DC3C743E3D651680917134 /* Pods-socketDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-socketDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-socketDemo/Pods-socketDemo.debug.xcconfig"; sourceTree = "<group>"; };
@@ -156,22 +159,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		DF34BC0020E0E9F6009CAD3D /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				DF34BC0520E0EA44009CAD3D /* JYCamera.h */,
-				DF34BC0120E0EA43009CAD3D /* JYCamera.m */,
-				DF34BC0420E0EA44009CAD3D /* JYCanon.h */,
-				DF34BC0820E0EA44009CAD3D /* JYCanon.m */,
-				DF34BC0220E0EA43009CAD3D /* JYCanonDic.h */,
-				DF34BC0720E0EA44009CAD3D /* JYCanonDic.m */,
-				DF34BC0620E0EA44009CAD3D /* JYNikon.h */,
-				DF34BC0320E0EA44009CAD3D /* JYNikon.m */,
-				DF34BC0D20E0EB37009CAD3D /* CameraModel.h */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
 		DF36CE4920DB87CC003CA1EB = {
 			isa = PBXGroup;
 			children = (
@@ -197,8 +184,8 @@
 		DF36CE5420DB87CC003CA1EB /* socketDemo */ = {
 			isa = PBXGroup;
 			children = (
+				DF3EB5FC20E31D0700AA36FD /* Model */,
 				DF3A195820E25B350078BF9F /* View */,
-				DF34BC0020E0E9F6009CAD3D /* Model */,
 				DF36CEA520DB8CFE003CA1EB /* Other */,
 				DF36CE9520DB8CB1003CA1EB /* SocketTool */,
 				DF36CE8B20DB8C4F003CA1EB /* Category */,
@@ -271,6 +258,8 @@
 				DF36CE9A20DB8CF3003CA1EB /* LHSocketSender.m */,
 				DF36CE9E20DB8CF3003CA1EB /* LHUnpackingData.h */,
 				DF36CE9820DB8CF3003CA1EB /* LHUnpackingData.m */,
+				DF4360CD20E6014100FD5574 /* JYLookupTableMethod.h */,
+				DF4360CE20E6014100FD5574 /* JYLookupTableMethod.m */,
 			);
 			path = SocketTool;
 			sourceTree = "<group>";
@@ -301,6 +290,22 @@
 				DF3A195A20E25C3E0078BF9F /* JYBasePickerView.xib */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		DF3EB5FC20E31D0700AA36FD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				DF3EB5FD20E31D6300AA36FD /* JYCamera.h */,
+				DF3EB5FE20E31D6300AA36FD /* JYCamera.m */,
+				DF3EB60420E31D6400AA36FD /* JYCanon.h */,
+				DF3EB60320E31D6400AA36FD /* JYCanon.m */,
+				DF3EB5FF20E31D6300AA36FD /* JYCanonDic.h */,
+				DF3EB60020E31D6300AA36FD /* JYCanonDic.m */,
+				DF3EB60120E31D6400AA36FD /* JYNikon.h */,
+				DF3EB60220E31D6400AA36FD /* JYNikon.m */,
+				DF3EB60920E31EAA00AA36FD /* CameraModel.h */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		E202039BD713DDFBF741CCF6 /* Frameworks */ = {
@@ -468,21 +473,22 @@
 				DF36CEA220DB8CF3003CA1EB /* LHSocketSender.m in Sources */,
 				DF36CEA420DB8CF3003CA1EB /* LHSocketNotiObj.m in Sources */,
 				DF36CE9420DB8C98003CA1EB /* NSString+LHString.m in Sources */,
+				DF3EB60720E31D6400AA36FD /* JYNikon.m in Sources */,
 				DF36CE8A20DB8BB8003CA1EB /* LHSocketManager.m in Sources */,
-				DF34BC0C20E0EA44009CAD3D /* JYCanon.m in Sources */,
-				DF34BC0B20E0EA44009CAD3D /* JYCanonDic.m in Sources */,
+				DF4360CF20E6014100FD5574 /* JYLookupTableMethod.m in Sources */,
 				DF36CEA320DB8CF3003CA1EB /* LHPacketData.m in Sources */,
 				DF36CE9320DB8C98003CA1EB /* UIImage+LHImage.m in Sources */,
 				DF36CE5A20DB87CD003CA1EB /* ViewController.m in Sources */,
 				DF36CE6520DB87CE003CA1EB /* main.m in Sources */,
+				DF3EB60520E31D6400AA36FD /* JYCamera.m in Sources */,
+				DF3EB60820E31D6400AA36FD /* JYCanon.m in Sources */,
 				DF36CEB220DB8D64003CA1EB /* LHSocketResponse.m in Sources */,
 				DF36CEB120DB8D64003CA1EB /* LHSocketOperation.m in Sources */,
 				DF450DA220DD0A7A006C6542 /* JYProduct.m in Sources */,
+				DF3EB60620E31D6400AA36FD /* JYCanonDic.m in Sources */,
 				DF36CE9220DB8C98003CA1EB /* NSArray+LHArray.m in Sources */,
 				DF36CEA920DB8D3B003CA1EB /* LHConst.m in Sources */,
 				DF36CEB020DB8D64003CA1EB /* LHSocketProperty.m in Sources */,
-				DF34BC0920E0EA44009CAD3D /* JYCamera.m in Sources */,
-				DF34BC0A20E0EA44009CAD3D /* JYNikon.m in Sources */,
 				DF3A196020E25EFE0078BF9F /* UIView+Extension.m in Sources */,
 				DF36CEA020DB8CF3003CA1EB /* LHSocketDecodeTool.m in Sources */,
 				DF3A195D20E25C3F0078BF9F /* JYBasePickerView.m in Sources */,

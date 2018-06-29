@@ -74,3 +74,42 @@ UIKIT_EXTERN int const Canon_type;
  nikon 04b0
  */
 UIKIT_EXTERN int const Nikon;
+
+UIKIT_EXTERN int const ExposureProgramModel_m;
+UIKIT_EXTERN int const ExposureProgramModel_program;
+UIKIT_EXTERN int const ExposureProgramModel_av;
+UIKIT_EXTERN int const ExposureProgramModel_tv;
+UIKIT_EXTERN int const ExposureProgramModel_auto;
+UIKIT_EXTERN int const ExposureProgramModel_portrait;
+UIKIT_EXTERN int const ExposureProgramModel_landscape;
+UIKIT_EXTERN int const ExposureProgramModel_close_up;
+UIKIT_EXTERN int const ExposureProgramModel_sports;
+UIKIT_EXTERN int const ExposureProgramModel_night_scene_portrait;
+UIKIT_EXTERN int const ExposureProgramModel_flash_off;
+UIKIT_EXTERN int const ExposureProgramModel_Child; // TODO Child
+UIKIT_EXTERN int const ExposureProgramModel_SCENE; // TODO SCENE
+UIKIT_EXTERN int const ExposureProgramModel_mode_U1; // TODO User mode U1
+UIKIT_EXTERN int const ExposureProgramModel_mode_U2; // TODO User mode U2
+
+UIKIT_EXTERN int const NikonWhitebalance_Auto;
+UIKIT_EXTERN int const NikonWhitebalance_Sunny;
+UIKIT_EXTERN int const NikonWhitebalance_Fluorescent;
+UIKIT_EXTERN int const NikonWhitebalance_Incandescent;
+UIKIT_EXTERN int const NikonWhitebalance_Flash;
+UIKIT_EXTERN int const NikonWhitebalance_Cloudy;
+UIKIT_EXTERN int const NikonWhitebalance_SunnyShade;
+UIKIT_EXTERN int const NikonWhitebalance_ColorTemperature;
+UIKIT_EXTERN int const NikonWhitebalance_Preset;
+
+//focus model
+//AF-S  AF-C AF-A MF
+UIKIT_EXTERN int const NikonFocusModelGetValue_AF_S;
+UIKIT_EXTERN int const NikonFocusModelGetValue_AF_C;
+UIKIT_EXTERN int const NikonFocusModelGetValue_AF_A;
+UIKIT_EXTERN int const NikonFocusModelGetValue_MF;
+
+UIKIT_EXTERN int const NikonFocusModelSetValue_AF_S;
+UIKIT_EXTERN int const NikonFocusModelSetValue_AF_C;
+UIKIT_EXTERN int const NikonFocusModelSetValue_AF_A;
+UIKIT_EXTERN int const NikonFocusModelSetValue_MF;
+

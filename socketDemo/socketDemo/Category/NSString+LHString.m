@@ -61,6 +61,17 @@
     
 }
 
+- (float)hexString2Float
+{
+    if (nil == self) {
+        return 0;
+    }
+    float value;
+    unsigned long red = strtoul([self UTF8String],0,16);
+    *((int *)&value) = red;
+    return value;
+}
+
 - (BOOL)compareWithHexint:(int)hexInt{
     NSMutableData* dataStr = [NSMutableData data];
     int idx;
@@ -77,7 +88,31 @@
     byte[1] =  (Byte) ((hexInt>>8) & 0xFF);
     byte[0] =  (Byte) (hexInt & 0xFF);
     NSData *dataValue = [NSData dataWithBytes:byte length:sizeof(byte)];
-//    NSLog(@"compareWithHexint>>> %@ -- %@",dataStr, dataValue);
+//    NSLog(@"compareWithHexint>>> %@ -- hexInt %@",dataStr, dataValue);
+    if ([dataStr isEqualToData:dataValue]) {
+        return YES;
+    }else{
+        return NO;
+    }
+}
+
+- (BOOL)compareNotConverHexint:(int)hexInt{
+    NSMutableData* dataStr = [NSMutableData data];
+    int idx;
+    for (idx = 0; idx+2 <= self.length; idx+=2) {
+        NSRange range = NSMakeRange(idx, 2);
+        NSString *hexStr = [self substringWithRange:range];
+        NSScanner* scanner = [NSScanner scannerWithString:hexStr];
+        unsigned int intValue;
+        [scanner scanHexInt:&intValue];
+        [dataStr appendBytes:&intValue length:1];
+    }
+    
+    Byte byte[2] = {};
+    byte[0] =  (Byte) ((hexInt>>8) & 0xFF);
+    byte[1] =  (Byte) (hexInt & 0xFF);
+    NSData *dataValue = [NSData dataWithBytes:byte length:sizeof(byte)];
+    NSLog(@"compareNotConverHexint>>> %@ -- hexInt %@",dataStr, dataValue);
     if ([dataStr isEqualToData:dataValue]) {
         return YES;
     }else{
